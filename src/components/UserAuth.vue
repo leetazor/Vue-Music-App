@@ -69,7 +69,8 @@
             </button>
           </form>
           <!-- Registration Form -->
-          <VeeForm v-show="(tab === 'register')" :validation-schema="valSchema" >
+          <VeeForm v-show="(tab === 'register')" :validation-schema="valSchema"
+            @submit="register" >
             <!-- Name -->
             <div class="mb-3">
               <label class="inline-block mb-2">Name</label>
@@ -99,10 +100,15 @@
             <!-- Password -->
             <div class="mb-3">
               <label class="inline-block mb-2">Password</label>
-              <VeeField name="password" type="password"
-                class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition
-                  duration-500 focus:outline-none focus:border-black rounded"
-                placeholder="Password" />
+              <!-- :bails="false" allows us to output multiple errors for each field,
+                without it only 1 error will get output at once -->
+              <VeeField name="password" type="password" :bails="false" v-slot="{ field, errors }" >
+                <input class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition
+                  duration-500 focus:outline-none focus:border-black rounded" placeholder="Password" v-bind="field" />
+                <div  class="text-red-600" v-for="error in errors" :key="error">
+                  {{ error }}
+                </div>
+              </VeeField>
               <ErrorMessage class="text-red-600" name="password" />
             </div>
             <!-- Confirm Password -->
@@ -128,9 +134,12 @@
               <ErrorMessage class="text-red-600" name="country" />
             </div>
             <!-- TOS -->
-            <div class="mb-3 pl-6">
-              <VeeField type="checkbox" name="tos" value="1" class="w-4 h-4 float-left -ml-6 mt-1 rounded" />
-              <label class="inline-block">Accept terms of service</label>
+            <div class="mb-1 pl-6">
+              <VeeField type="checkbox" name="tos" value="1"  class="w-4 h-4 float-left -ml-6 mt-1 rounded" />
+              <label class="block">Accept terms of service</label>              
+            </div>
+            <div class="mb-3">
+              <ErrorMessage class="text-red-600" name="tos" />
             </div>
             <button type="submit"
               class="block w-full bg-purple-600 text-white py-1.5 px-3 rounded transition
@@ -138,6 +147,7 @@
               Submit
             </button>
           </VeeForm>
+       
         </div>
       </div>
     </div>
@@ -159,7 +169,7 @@ export default {
         password: 'required|min:5|max:100',
         confirm_password: 'confirmed:@password',
         country: 'required|excluded:Antarctica',
-        tos: '',
+        tos: 'required'
       }
     }
   },
@@ -178,6 +188,9 @@ export default {
   },
   methods: {
     ...mapMutations(['toggleAuthModal']),
+    register(values) {
+      console.log(values);
+    }
   },
 };
 
