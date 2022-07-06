@@ -273,5 +273,8 @@ export default {
     AppHeader,
     UserAuth,
   },
+  created() {
+    this.$store.dispatch('init_login');
+  },
 };
 </script>

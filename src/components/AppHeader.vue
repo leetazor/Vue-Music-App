@@ -8,12 +8,18 @@
         <!-- Primary Navigation -->
         <ul class="flex flex-row mt-1">
           <!-- Navigation Links -->
-          <li>
+          <li v-if="!userLoggedIn">
             <a class="px-2 text-white" href="#" @click.prevent="toggleAuthModal" >Login / Register</a>
           </li>
-          <li>
-            <a class="px-2 text-white" href="#">Manage</a>
-          </li>
+          <template v-else>
+            <li>
+              <a class="px-2 text-white" href="#">Manage</a>
+            </li>
+             <li>
+              <a class="px-2 text-white" href="#" @click.prevent="signout">Logout</a>
+            </li>
+          </template>
+          
         </ul>
       </div>
     </nav>
@@ -22,14 +28,19 @@
 
 <script>
 
-import { mapMutations } from 'vuex';
+import { mapMutations, mapState, mapActions } from 'vuex';
 
 export default {
   name: 'AppHeader',
+  computed: {
+    ...mapState(['userLoggedIn']), 
+  },
   methods: {
     // mapMutations function will extract the toggleAuthModal function directly from the store
     // we need to use a spread operator here, since we're already inside of an object
     ...mapMutations(['toggleAuthModal']),
+    // instead of dispatching an action, we can import mapActions directly from the store
+    ...mapActions(['signout']),    
 
     // toggleAuthModal() {
     //   // commit allows us to call a mutation from the store

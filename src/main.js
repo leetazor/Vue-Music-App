@@ -1,15 +1,29 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
-import store from './store';
+import store from './store/store';
 import VeeValidatePlugin from './includes/validation';
+import { auth } from './includes/firebase';
 import './assets/tailwind.css';
 import './assets/main.css';
 
-const app = createApp(App);
 
-app.use(store);
-app.use(router);
-app.use(VeeValidatePlugin);
+// we are declaring a variable before creating Vue app, it's currently empty
+let app;
 
-app.mount('#app');
+// we're listening to AuthStateChange
+auth.onAuthStateChanged(() => {
+  // when AuthState changes, if app is empty, we're creating and mounting an app
+  // we're doing this, so the app would have access to the authenticated user
+  if(!app) {
+    app = createApp(App);
+
+    app.use(store);
+    app.use(router);
+    app.use(VeeValidatePlugin);
+  
+    app.mount('#app');
+  }
+
+});
+
