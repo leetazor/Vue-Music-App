@@ -23,26 +23,18 @@
       </div>
       <hr class="my-6" />
       <!-- Progess Bars -->
-      <div class="mb-4">
+      <div class="mb-4" v-for="upload in uploads" :key="upload.name">
         <!-- File Name -->
-        <div class="font-bold text-sm">Just another song.mp3</div>
+        <div class="font-bold text-sm" :class="upload.text_class">
+          <i :class="upload.icon"></i>{{ upload.name }}
+        </div>
         <div class="flex h-4 overflow-hidden bg-gray-200 rounded">
           <!-- Inner Progress Bar -->
-          <div class="transition-all progress-bar bg-blue-400" style="width: 75%"></div>
+          <div class="transition-all progress-bar"
+            :class="upload.variant"
+            :style="{ width: upload.current_progress + '%' }"></div>
         </div>
-      </div>
-      <div class="mb-4">
-        <div class="font-bold text-sm">Just another song.mp3</div>
-        <div class="flex h-4 overflow-hidden bg-gray-200 rounded">
-          <div class="transition-all progress-bar bg-blue-400" style="width: 35%"></div>
-        </div>
-      </div>
-      <div class="mb-4">
-        <div class="font-bold text-sm">Just another song.mp3</div>
-        <div class="flex h-4 overflow-hidden bg-gray-200 rounded">
-          <div class="transition-all progress-bar bg-blue-400" style="width: 55%"></div>
-        </div>
-      </div>
+      </div>  
     </div>
   </div>
 </template>
@@ -55,6 +47,7 @@ export default {
   data() {
     return {
       is_dragover: false,
+      uploads: [],
     };
   },
   methods: {
@@ -64,15 +57,54 @@ export default {
       // we are getting the object and spreading it inside of an array 
       const  files = [...$event.dataTransfer.files];
 
-       files.forEach((file) => {
-        if(file.type !== 'audio/mpeg') {
-          return;
-        }
+        files.forEach((file) => {
+          if(file.type !== 'audio/mpeg') {
+            return;
+          }
 
-        const storageRef = storage.ref(); // StorageBucket: "vue-music-app-38d35.appspot.com"
-        const songsRef = storageRef.child(`songs/${file.name}`); // "vue-music-app-38d35.appspot.com/songs/example.mp3"
-        songsRef.put(file);
-       }); 
+          const storageRef = storage.ref(); // StorageBucket: "vue-music-app-38d35.appspot.com"
+          const songsRef = storageRef.child(`songs/${file.name}`); // "vue-music-app-38d35.appspot.com/songs/example.mp3"
+          // the 'put' method we called to initiate upload will return an object
+          // this object will emit events we can listen to during the upload
+          // we need to asign the returned object to a variable:
+          const task = songsRef.put(file);
+          
+          // here we are pushing a new upload object into the 'uploads' array in the data
+          // we are getting and saving the 'index' by assigning the value returned from the push method to a variable
+          // the 'push' function will return the length of the array after the object has been pushed into it
+          // the object will be inserted as the last item in the array
+          // we can subtract 1 from the length of the array to get the index for that latest item in the array
+          const uploadIndex = this.uploads.push({
+            task,
+            current_progress: 0,
+            name: file.name,
+            variant: 'bg-blue-400',
+            icon: 'fas fa-spinner fa-spin',
+            text_class: '',
+          }) -1 ;
+      
+          // right after creating the 'task' variable, we're going to call the 'on' function from it
+          // this function will let us listen to events on the object
+          // the name of the event we want to listen to is called 'state_changed'
+          // this even will get emitted on 3 occasions: progress of the upload, if upload failed or succeeded
+          // the callback functions below must be arrow functions, to get access to the 'this' keyword to access this component's data()
+          task.on(
+            'state_changed',
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100; // calculates how many % have been loaded so far
+              this.uploads[uploadIndex].current_progress = progress;
+            }, (error) => {
+              this.uploads[uploadIndex].variant = 'bg-red-400';
+              this.uploads[uploadIndex].icon = 'fas fa-times';
+              this.uploads[uploadIndex].text_class = 'text-red-400';
+              console.log(error);
+            }, () => {
+              this.uploads[uploadIndex].variant = 'bg-green-400';
+              this.uploads[uploadIndex].icon = 'fas fa-check';
+              this.uploads[uploadIndex].text_class = 'text-green-400';
+            }
+          );
+        }); 
     },
   },
 };
