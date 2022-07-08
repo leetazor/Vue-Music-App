@@ -52,9 +52,13 @@ export default createStore({
         commit('toggleAuth');
       }
     },
-    async signout({commit}) {
+    async signout({commit}, routerInfo) {
       await auth.signOut();
       commit('toggleAuth');
+
+      if (routerInfo.route.meta.requiresAuth) {
+        routerInfo.router.push({ name: 'home'});
+      }  
     },
   },
   modules: {
