@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import AboutView from '@/views/AboutView.vue';
 import ManageView from '@/views/ManageView.vue';
+import SongDetails from '@/views/SongDetails.vue';
 import store from '@/store/store';
 
 const routes = [
@@ -32,6 +33,11 @@ const routes = [
   {
     path: '/manage',
     redirect: { name: 'manage' },  
+  },
+  {
+    path: '/song/:id',
+    name: 'song',
+    component: SongDetails,
   },
   //redirecting all paths that do not exist to the home page
   {

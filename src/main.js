@@ -13,7 +13,8 @@ let app;
 
 // we're listening to AuthStateChange
 auth.onAuthStateChanged(() => {
-  // when AuthState changes, if app is empty, we're creating and mounting an app
+  // when AuthState changes, if app variable is empty (has no value),
+  // we're creating and mounting an app
   // we're doing this, so the app would have access to the authenticated user
   if(!app) {
     app = createApp(App);
