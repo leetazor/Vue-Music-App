@@ -8,6 +8,7 @@ import Icon from './directives/icon';
 import './assets/tailwind.css';
 import './assets/main.css';
 import './registerServiceWorker'
+import GlobalComponents from './includes/_globals';
 
 
 // we are declaring a variable before creating Vue app, it's currently empty
@@ -24,6 +25,7 @@ auth.onAuthStateChanged(() => {
     app.use(store);
     app.use(router);
     app.use(VeeValidatePlugin);
+    app.use(GlobalComponents);
     app.directive('icon', Icon);  
     
     app.mount('#app');
