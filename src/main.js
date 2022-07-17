@@ -9,7 +9,11 @@ import './assets/tailwind.css';
 import './assets/main.css';
 import './registerServiceWorker'
 import GlobalComponents from './includes/_globals';
+import ProgressBar from './includes/progressBar';
+import 'nprogress/nprogress.css';
 
+// this will make the router object accessible in the progressBar file:
+ProgressBar(router);
 
 // we are declaring a variable before creating Vue app, it's currently empty
 let app;

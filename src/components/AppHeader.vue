@@ -39,7 +39,11 @@ import { mapMutations, mapState } from 'vuex';
 export default {
   name: 'AppHeader',
   computed: {
-    ...mapState(['userLoggedIn']), 
+    //...mapState(['userLoggedIn']), 
+    ...mapState({
+      userLoggedIn: (state) => state.auth.userLoggedIn,      
+    }),
+
   },
   methods: {
     // mapMutations function will extract the toggleAuthModal function directly from the store

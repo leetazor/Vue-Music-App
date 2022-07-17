@@ -1,9 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '@/views/HomeView.vue';
-import AboutView from '@/views/AboutView.vue';
-import ManageView from '@/views/ManageView.vue';
-import SongDetails from '@/views/SongDetails.vue';
 import store from '@/store/store';
+
+// instruct Webpack to create chunks to otimize loading times:
+// If we import components this way, Webpack will load files into chunks for us
+const HomeView = () => import('@/views/HomeView.vue');
+const AboutView = () => import('@/views/AboutView.vue');
+const ManageView = () => import(/* webpackChunkName: 'groupedChunk' */'@/views/ManageView.vue');
+const SongDetails = () => import(/* webpackChunkName: 'groupedChunk' */'@/views/SongDetails.vue');
 
 const routes = [
   {
@@ -65,7 +68,7 @@ router.beforeEach((to, from, next) => {
     return;
   }
 
-  if (store.state.userLoggedIn) {
+  if (store.state.auth.userLoggedIn) {
     next();
   } else {
     next({ name: 'home' });

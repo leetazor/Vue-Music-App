@@ -90,7 +90,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(['userLoggedIn']),
+    //...mapState(['userLoggedIn']),
+    ...mapState({
+      userLoggedIn: (state) => state.auth.userLoggedIn,          
+    }),
     sortedComments() {
       // .sort() will directly change the array it's called on (stored in data()), we can't allow this to happen
       // that is why we apply .slice() first, to create a new array and sort that new one, without changing the original
@@ -176,26 +179,42 @@ export default {
       });
     },
   },
-  async created() {
-    const docSnapshot = await songsCollection.doc(this.$route.params.id).get();
+  async beforeRouteEnter(to, from, next) {
+    const docSnapshot = await songsCollection.doc(to.params.id).get();
     
-    // firebase will continue returning snapshot of a document, even if document doesn't exist in the database
-    // we need to check if the document exists, using document snapshot and .exists function
-    // if the document doesn't exist, we want to navifate the user away from the page
-    if(!docSnapshot.exists) {
-      this.$router.push({ name: 'home' });
-      return;
-    }
-    
-    // we can use this lifecycle function to check if there is a query parameter in the url
-    // if there is one, we'll apply the value to the 'sort' data() property of this component
-    const { sort } = this.$route.query;
+    // vm is the context to the component, we can treat it like the 'this' keyword
+    next((vm) => {
+      // firebase will continue returning snapshot of a document, even if document doesn't exist in the database
+      // we need to check if the document exists, using document snapshot and .exists function
+      // if the document doesn't exist, we want to navifate the user away from the page
+      if(!docSnapshot.exists) {
+        vm.$router.push({ name: 'home' });
+        return;
+      }
+      
+      // we can use this lifecycle function to check if there is a query parameter in the url
+      // if there is one, we'll apply the value to the 'sort' data() property of this component
+      const { sort } = vm.$route.query;
 
-    this.sort = (sort === '1' || sort === '2') ? sort : '1';
- 
-    this.song = docSnapshot.data();
-    this.getComments();
-  }
+      vm.sort = (sort === '1' || sort === '2') ? sort : '1';
+  
+      vm.song = docSnapshot.data();
+      vm.getComments();
+    });    
+  },
+  // async created() {
+  //   const docSnapshot = await songsCollection.doc(this.$route.params.id).get();
+
+  //   if(!docSnapshot.exists) {
+  //     this.$router.push({ name: 'home' });
+  //     return;
+  //   }
+
+  //   const { sort } = this.$route.query;
+  //   this.sort = (sort === '1' || sort === '2') ? sort : '1'; 
+  //   this.song = docSnapshot.data();
+  //   this.getComments();
+  // }
 }
 </script>
 

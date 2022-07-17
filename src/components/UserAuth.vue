@@ -67,8 +67,12 @@ export default {
     };
   },
   computed: {
-
-    ...mapState(['authModalShow']),
+    
+    // the below mapping won't work with vuex store modules:
+    //...mapState(['authModalShow']),
+    ...mapState({
+      authModalShow: (state) => state.auth.authModalShow,      
+    }),
 
     // mapping state, using Aliases:
     // ...mapState({
