@@ -19,6 +19,11 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
 
+//keep a cached copy on users device, in case the app will need to work offline
+db.enablePersistence().catch((error) => {
+  console.log(`Firebase persistance error ${error.code}`);
+});
+
 
 const usersCollection = db.collection('users');
 const songsCollection = db.collection('songs');

@@ -71,6 +71,18 @@ export default {
         return;
       }
 
+      if(!navigator.onLine) {
+        this.uploads.push({
+          task: {},
+          current_progress: 100,
+          name: file.name,
+          variant: 'bg-red-400',
+          icon: 'fas fa-times',
+          text_class: 'text-red-400',
+        });
+        return;
+      }
+
       let randomNumber = Math.floor(Math.random() * (100000 - 10000 + 1)) + 10000;
 
       const storageRef = storage.ref(); // StorageBucket, e.g. "vue-music-app-38d35.appspot.com"
