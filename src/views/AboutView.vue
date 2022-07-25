@@ -7,13 +7,13 @@
 
 <script>
 // importing the module to register it dynamically:
-import dummyModule from '@/store/modules/dummy';
+// import dummyModule from '@/store/modules/dummy';
 
-export default {
-  created() {
-    // dynamically registering the module:
-    // the registerModule() function will register an additional module to the vuex store
-    this.$store.registerModule('dummy', dummyModule);
-  }
-}
+// export default {
+//   created() {
+//     // dynamically registering the module:
+//     // the registerModule() function will register an additional module to the vuex store
+//     this.$store.registerModule('dummy', dummyModule);
+//   }
+// }
 </script>

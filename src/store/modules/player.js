@@ -16,7 +16,9 @@ export default {
   getters: {
     // getAuthModalShow: (state) => state.authModalShow,
     playing: (state) => {
-      // check if the audio  is currently playing with the help of playing() function off Howl sound object
+      // check if the 'playing' function is present on the sound object in the state
+      // 'playing' is a function that is present on the 'Howl' object
+      // if the function is present, we return the value of that function 
       if(state.sound.playing) {
         return state.sound.playing();
       } 
